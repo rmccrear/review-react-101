@@ -1,120 +1,55 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react"
+import useFetchData from "./useFetchData"
+
+import Header from "./Header"
+import "./App.css"
+
+console.log("Hello world from App.jsx")
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchTerm, setSearchTerm] = useState("")
+  const {records, loading, error} = useFetchData("https://roberts-data-api.robert-mccreary-713.workers.dev/api/v1/datasets/most-spoken-languages-worldwide/records?limit=200")
+  console.log(loading, records)
+  console.log(searchTerm)
+  if(loading) {
+    return (<h1>Loading...</h1>)
+  }
+
+  const languages = records.filter((lang) => lang.Branch===searchTerm)
+  const languagesDisplay = languages.map((lang) => (
+    <>
+      <article>
+        <h1>Language: {lang.Language}</h1>
+        <p>Speakers: {lang["Speakers in millions"]}</p>
+        <p>Branch: {lang.Branch}</p>
+      </article>
+    </>
+  ))
+  
+
+  function clickMe() {
+    const inputElement = document.getElementById("search-input")
+    // const searchTerm = inputElement.value
+    setSearchTerm(inputElement.value)
+  }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <Header />
 
-      <div className="ticks"></div>
+      <div className="search-bar">
+        <input type="text"  placeholder="Cats..." id="search-input" />
+        <button onClick={clickMe} >Click me</button>
+      </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      {languagesDisplay}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+
+      <div className="footer" id="footer">
+        &copy; Robert 2026
+      </div>
     </>
   )
 }
